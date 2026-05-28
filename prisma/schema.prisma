@@ -1,16 +1,31 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
   moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model books {
+  id           Int    @id @default(autoincrement()) 
+  title        String    @db.VarChar(255)
+  author       String    @db.VarChar(255)
+  publish_year Int
+  page_count   Int
+  created_at   DateTime? @db.Timestamp(0)
+  updated_at   DateTime? @db.Timestamp(0)
+
+  rentals     rentals[]
+}
+
+model rentals {
+  id          Int     @id @default(autoincrement())
+  book_id     Int
+  start_date  DateTime
+  end_date    DateTime
+
+  books       books @relation(fields: [book_id], references: [id])
 }
